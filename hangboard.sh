@@ -29,7 +29,7 @@ do
        afplay $1 &>/dev/null &
   fi
 
-  for i in $(seq 1); do
+  for i in $(seq 11); do
     case "$i" in
       1)
         EXERCISE="15 second hang, 3 pull ups on jugs."
