@@ -10,24 +10,11 @@ updateTime () {
   i=0
   while [ $i -lt 60 ]
   do
-    say "$EXERCISE";
-    sleep ${1:-5};
-		echo -ne '\007' # ascii beep @ midway lol
-    sleep ${1:-5};
-    i=$(( $i + 10 ));
-    say "$i seconds";
+    sleep ${1:-1};
+    i=$(( $i + 1 ));
+    echo $i
   done
 }
-
-keepRunning=$true;
-
-while $keepRunning
-do
-
-  if [ $# -gt 0 ]
-    then
-       afplay $1 &>/dev/null &
-  fi
 
   for i in $(seq 11); do
     case "$i" in
@@ -68,10 +55,6 @@ do
     say "NEXT";
   done;
 
-  keepRunning=$false;
-done;
-
-KILL $!
 
 
 
