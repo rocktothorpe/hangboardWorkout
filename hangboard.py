@@ -5,15 +5,26 @@ import tkinter as tk
 import threading
 
 
-def say(text):
+def say(text, i):
     # read exercises aloud using google text-to-speech lol
-    mp3 = "tts.mp3"
     print(text)
-    tts = gtts.gTTS(text)
-    tts.save(mp3)
+    mp3 = get_mp3(text, i)
     playsound(mp3)
-    os.remove(mp3)
 
+def get_mp3(text, i):
+    mp3 = f"tts{i}.mp3"
+    if os.path.exists(mp3):
+        return mp3
+    else:
+        print(f'getting mp3 for text: {text}')
+        try:
+            tts = gtts.gTTS(text)
+            tts.save(mp3)
+        except:
+            print('failed. retrying...')
+            os.remove(mp3)
+            get_mp3(text, i)
+        return mp3
 
 class HangboardWorkout:
     def __init__(self, count_time=60):
@@ -29,6 +40,9 @@ class HangboardWorkout:
                      "15 second hang on pocket, 3 pull ups on jug.",
                      "Hang as long as possible, large edge."
                      ]
+
+        self.get_workout_mp3s()
+
         # countdown time per workout
         self.count_time = count_time
         # current countdown time
@@ -42,11 +56,15 @@ class HangboardWorkout:
         song_time = time.time()
         # playsound("unforgiven_ii.mp3", False)  # play metallica in background lmao
 
+    def get_workout_mp3s(self):
+        for workout in range(len(self.text)):
+            get_mp3(self.text[workout], i=workout)
+
     def workout(self):
         for workout in range(len(self.text)):
             self.i = self.count_time
             self.current_workout = self.text[workout] + '\n'
-            say(self.current_workout)
+            say(self.current_workout, i=workout)
             while self.i > 0:
                 start = time.time()
                 sys.stdout.write(f'\r{self.i:03}')  # carriage return and zero pad i to be two digits
@@ -63,7 +81,7 @@ class HangboardWorkout:
         self.root = tk.Tk()
         self.root.geometry("1200x350")
         bg1 = 'grey94'
-        bg2 = 'hot pink'
+        bg2 = 'pale green'
         self.root.configure(background=bg1)
         font = ('Helvetica', 30)
         self.l = tk.Label(self.root, text=self.current_workout, font=font, bg=bg1)
@@ -84,9 +102,12 @@ class HangboardWorkout:
     def add_time(self):
         self.i += 10
 
+    def start(self):
+        self.gui_thread.start()
+        self.work_thread.start()
+
 
 if __name__ == "__main__":
-    hang = HangboardWorkout(count_time=120)
-    hang.gui_thread.start()
-    hang.work_thread.start()
+    hang = HangboardWorkout(count_time=60)
+    hang.start()
 
