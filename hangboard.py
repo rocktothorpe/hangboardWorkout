@@ -108,6 +108,6 @@ class HangboardWorkout:
 
 
 if __name__ == "__main__":
-    hang = HangboardWorkout(count_time=80)
+    hang = HangboardWorkout(count_time=60)
     hang.start()
 
